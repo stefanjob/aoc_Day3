@@ -11,16 +11,13 @@ public class main {
     public static void part2() {
         System.out.println("AoC Day 3 Part 2");
 
-        String regex = "mul\\((\\d+),(\\d+)\\)";
+        String regex = "don't\\(\\)|mul\\((\\d+),(\\d+)\\)|do\\(\\)";
 
         // Compile the pattern
         Pattern pattern = Pattern.compile(regex);
 
-        // List to store the matches
-        List<String> matches = new ArrayList<>();
-
         // Variable to store the sum of products
-        int sumOfProducts = 0;
+        long sumOfProducts = 0;
 
         boolean full = true;
         Scanner scanner = null;
@@ -36,43 +33,41 @@ public class main {
             e.printStackTrace();
         }
 
-        String input = "";
+        boolean ignore = false;
 
         while (scanner.hasNextLine()) {
+            
             String line = scanner.nextLine();
             System.out.println(line);
-            input = input + line;
-        }
 
-        // Match the pattern in the input string
-        Matcher matcher = pattern.matcher(input);
-
-        // Iterate through the matches
-        while (matcher.find()) {
-            int matchStart = matcher.start();
-
-            // Check for "don’t()" before the match
-            String beforeMatch = input.substring(0, matchStart);
-            boolean ignore = beforeMatch.contains("don‘t()") && !beforeMatch.contains("do()");
-
-            if (!ignore) {
+            // Match the pattern in the input string
+            Matcher matcher = pattern.matcher(line);
+ 
+            // List to store the matches
+            List<String> matches = new ArrayList<>();
+            
+            // Iterate through the matches
+            while (matcher.find()) {
                 matches.add(matcher.group());
-
-                // Extract the numbers and calculate the product
-                int num1 = Integer.parseInt(matcher.group(1));
-                int num2 = Integer.parseInt(matcher.group(2));
-                sumOfProducts += num1 * num2;
+ 
+                if ("don't()".equalsIgnoreCase(matches.getLast())) {
+                    ignore = true;
+                } else if ("do()".equalsIgnoreCase(matches.getLast())) {
+                    ignore = false;
+                } else {
+                    if (!ignore) {
+                        System.out.println(matches.getLast());
+                        // Extract the numbers and calculate the product
+                        int num1 = Integer.parseInt(matcher.group(1));
+                        int num2 = Integer.parseInt(matcher.group(2));
+                        sumOfProducts += num1 * num2;
+                        }                
+                }
             }
-        }
-
-        // Print the results
-        System.out.println("Matches found:");
-        for (String match : matches) {
-            System.out.println(match);
-        }
 
         // Print the sum of products
         System.out.println("Sum of products: " + sumOfProducts);
+        }
     }
 
     public static void part1()
